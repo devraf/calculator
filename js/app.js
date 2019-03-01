@@ -50,25 +50,25 @@ const app = {
      app.clearKey.addEventListener('click', app.clearAll)
    },
    addKeyPress: () => {
-      app.addKey.addEventListener('click', app.add)
+       app.addKey.addEventListener('click', app.add)
    },
    total: 0,
    add: () => {
-     let input
-     if(app.displayNumbersList.length >= 1) {
-     input = app.stringToNumber(app.displayNumbersList.join(''))
-   }
+     if(app.display.innerText) {
+     let input = app.stringToNumber(app.displayNumbersList.join(''))
      console.log(input)
      app.total += input
      console.log(app.total)
      app.totalIsShowing = true
      app.displayTotal()
+   }
    },
    subtractKeyPress: () => {
      app.subtractKey.addEventListener('click', app.subtract)
    },
    firstInput: true,
    subtract: () => {
+     if(app.display.innerText) {
      let input
      input = app.stringToNumber(app.displayNumbersList.join(''))
      console.log(input)
@@ -82,6 +82,7 @@ const app = {
      app.firstInput = false
      app.totalIsShowing = true
      app.displayTotal()
+   }
    },
    totalIsShowing: false,
    displayTotal: () => {
@@ -91,10 +92,17 @@ const app = {
      app.displayNumbersList = []
 
    },
-   inputs: () => {
-
-
+   falseKeyPress: () =>{
+     if(app.display.innerText = NaN) {
+       app.display.innerText = ''
+     }
+     
    },
+   // test: () => {
+   //   let input1 input2
+   //   if ()
+   //
+   // },
    //isFloat will be true if the decimal key has been clicked otherwise it will be false
    isFloat: false,
    //this shoud run when the user clicks an operation
