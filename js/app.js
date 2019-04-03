@@ -3,10 +3,7 @@ const app = {
   display: document.querySelector('.display'),
   numberKeys: document.querySelectorAll('.number'),
   operatorKeys: document.querySelectorAll('.operator'),
-  addKey: document.querySelector('.add'),
-  subtractKey: document.querySelector('.subtract'),
-  multiplyKey: document.querySelector('.multiply'),
-  divideKey: document.querySelector('.divide'),
+  equalsKey: document.querySelector('.equal'),
   backspaceKey: document.querySelector('.backspace'),
   clearKey: document.querySelector('.clear'),
 
@@ -25,7 +22,7 @@ const app = {
   clearDisplay: () => {
     app.display.innerText = ''
     app.displayText = ''
-    app.runningTotal = ''
+    app.runningTotal = 0
   },
   removeLastEntry: () => {
     //remove last numer
@@ -39,32 +36,42 @@ const app = {
   clearKeyPress: () => {
     app.clearKey.addEventListener('click', app.clearDisplay)
   },
-  operations: () => {
-    let buffer = parseInt(app.displayText)
-    switch (app.operatorKeys.innerText) {
-      case '+':
-        console.log(buffer)
-        // buffer += buffer
-        // app.displayText = ''
-        break
+  buffer: () => {
+    if (!app.displayText) {
+      return 0
     }
-    return buffer
+    return parseInt(app.displayText)
   },
-  runningTotal: '',
+  runningTotal: 0,
+  currentOperator: '',
   operationsKeyPress: () => {
     app.keys.addEventListener('click', event => {
-      let buffer = parseInt(app.displayText)
-      // switch (event.target.innerText) {
-      //   case '+':
-      //     if (!app.runningTotal) {
-      //       app.runningTotal = buffer
-      //     } else app.runningTotal += buffer
-      //     app.displayText = ''
-      //     app.display.innerText = ''
-      //     app.display.innerText = app.runningTotal
-      //     console.log(app.runningTotal)
-      //     break
-      // }
+      if (event.target.classList.contains('operator')) {
+        app.currentOperator = event.target.innerText
+        app.operations()
+        app.displayText = ''
+        app.display.innerText = ''
+      }
+    })
+  },
+  operations: () => {
+    if (app.currentOperator === '') {
+      app.runningTotal = app.buffer()
+    } else if (app.currentOperator === '+') {
+      app.runningTotal += app.buffer()
+    } else if (app.currentOperator === '−') {
+      app.runningTotal -= app.buffer()
+    } else if (app.currentOperator === '/') {
+      app.runningTotal /= app.buffer()
+    } else if (app.currentOperator === '∗') {
+      app.runningTotal *= app.buffer()
+    } else return app.runningTotal
+  },
+  equals: () => {
+    app.equalsKey.addEventListener('click', () => {
+      app.operations()
+      app.display.innerText = app.runningTotal
+      app.displayText = ''
     })
   },
   init: () => {
@@ -72,6 +79,7 @@ const app = {
     app.backspaceKeyPress()
     app.clearKeyPress()
     app.operationsKeyPress()
+    app.equals()
   }
 }
 
