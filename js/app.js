@@ -6,81 +6,75 @@ const app = {
   equalsKey: document.querySelector('.equal'),
   backspaceKey: document.querySelector('.backspace'),
   clearKey: document.querySelector('.clear'),
-
   displayText: '',
-  numberKeypress: () => {
-    app.keys.addEventListener('click', event => {
-      if (event.target.classList.contains('number')) {
-        app.displayText += event.target.innerText
-        app.updateDisplay()
-      }
-    })
-  },
-  updateDisplay: () => {
-    app.display.innerText = app.displayText
-  },
-  clearDisplay: () => {
-    app.display.innerText = ''
-    app.displayText = ''
-    app.runningTotal = 0
-  },
-  removeLastEntry: () => {
-    //remove last numer
-    app.displayText = app.displayText.slice(0, -1)
-    app.updateDisplay()
-    return app.displayText
-  },
-  backspaceKeyPress: () => {
-    app.backspaceKey.addEventListener('click', app.removeLastEntry)
-  },
-  clearKeyPress: () => {
-    app.clearKey.addEventListener('click', app.clearDisplay)
-  },
-  buffer: () => {
-    if (!app.displayText) {
-      return 0
+  runningTotal: '',
+  keyPress: function () {
+    let input
+    let currentOperation
+    if (event.target.classList.contains('number')) {
+      return app.updateDisplay(numberKey(event))
+    } else if (event.target.classList.contains('backspace')) {
+      return removeLastEntry()
+    } else if (event.target.classList.contains('clear')) {
+      return clearAll()
+    } else if (event.target.classList.contains('operator')) {
+      return updateCurrentOperater(event)
+    } 
+
+    function numberKey(event) {
+      input = event.target.innerText
+      return input
     }
-    return parseInt(app.displayText)
-  },
-  runningTotal: 0,
-  currentOperator: '',
-  operationsKeyPress: () => {
-    app.keys.addEventListener('click', event => {
-      if (event.target.classList.contains('operator')) {
-        app.currentOperator = event.target.innerText
-        app.operations()
-        app.displayText = ''
-        app.display.innerText = ''
-      }
-    })
-  },
-  operations: () => {
-    if (app.currentOperator === '') {
-      app.runningTotal = app.buffer()
-    } else if (app.currentOperator === '+') {
-      app.runningTotal += app.buffer()
-    } else if (app.currentOperator === '−') {
-      app.runningTotal -= app.buffer()
-    } else if (app.currentOperator === '/') {
-      app.runningTotal /= app.buffer()
-    } else if (app.currentOperator === '∗') {
-      app.runningTotal *= app.buffer()
-    } else return app.runningTotal
-  },
-  equals: () => {
-    app.equalsKey.addEventListener('click', () => {
-      app.operations()
-      app.display.innerText = app.runningTotal
+
+    function removeLastEntry() {
+      app.displayText = app.displayText.slice(0, -1)
+      console.log(app.displayText)
+      return app.displayText
+    }
+
+    function clearAll() {
       app.displayText = ''
-    })
+      app.runningTotal = ''
+      console.log(app.displayText)
+      return app.displayText
+    }
+
+    function updateRunningTotal(operator) {
+      if (app.runningTotal === '') {
+        app.runningTotal = app.displayText
+        app.displayText = ''
+        console.log('running total is ', app.runningTotal)
+      }
+      // switch (operator) {
+      //   case '+':
+      //     console.log('running + operation')
+      //     break;
+      //   case '−':
+      //     console.log('run - operation')
+      //     break;
+      //   case '∗':
+      //     console.log('run ∗ operation')
+      //     break;
+      //   case '/':
+      //     console.log('run / operation')
+      //     break;
+      // }
+
+    }
+
+    function updateCurrentOperater(event) {
+      currentOperation = event.target.innerText
+      return updateRunningTotal(currentOperation)
+    }
+
   },
-  init: () => {
-    app.numberKeypress()
-    app.backspaceKeyPress()
-    app.clearKeyPress()
-    app.operationsKeyPress()
-    app.equals()
+  updateDisplay: function (data) {
+    this.displayText += data
+    console.log(this.displayText)
+  },
+  keyPressEvent: function () {
+    this.keys.addEventListener('click', this.keyPress)
   }
 }
 
-app.init()
+app.keyPressEvent()
