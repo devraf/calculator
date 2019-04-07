@@ -8,9 +8,9 @@ const app = {
   clearKey: document.querySelector('.clear'),
   displayText: '',
   runningTotal: '',
+  currentOperation: '',
   keyPress: function () {
     let input
-    let currentOperation
     if (event.target.classList.contains('number')) {
       return app.updateDisplay(numberKey(event))
     } else if (event.target.classList.contains('backspace')) {
@@ -18,8 +18,10 @@ const app = {
     } else if (event.target.classList.contains('clear')) {
       return clearAll()
     } else if (event.target.classList.contains('operator')) {
-      return updateCurrentOperater(event)
-    } 
+      return updateCurrentOperator(event)
+    } else if (event.target.classList.contains('equal')) {
+      return total()
+    }
 
     function numberKey(event) {
       input = event.target.innerText
@@ -43,28 +45,58 @@ const app = {
       if (app.runningTotal === '') {
         app.runningTotal = app.displayText
         app.displayText = ''
-        console.log('running total is ', app.runningTotal)
-      }
-      // switch (operator) {
-      //   case '+':
-      //     console.log('running + operation')
-      //     break;
-      //   case '−':
-      //     console.log('run - operation')
-      //     break;
-      //   case '∗':
-      //     console.log('run ∗ operation')
-      //     break;
-      //   case '/':
-      //     console.log('run / operation')
-      //     break;
-      // }
+        app.currentOperation = operator
+        return
+      } else convertToNumber(operator)
 
     }
 
-    function updateCurrentOperater(event) {
-      currentOperation = event.target.innerText
-      return updateRunningTotal(currentOperation)
+    function convertToNumber(operator) {
+      let newTotal = parseInt(app.runningTotal)
+      if (app.displayText != '') {
+        switch (operator) {
+          case '+':
+            console.log('running + operation')
+            newTotal += parseInt(app.displayText)
+            app.runningTotal = newTotal
+            return app.runningTotal
+          case '−':
+            newTotal -= parseInt(app.displayText)
+            console.log('running - operation')
+            app.runningTotal = newTotal
+            return app.runningTotal
+          case '∗':
+            console.log('running ∗ operation')
+            newTotal *= parseInt(app.displayText)
+            app.runningTotal = newTotal
+            return app.runningTotal
+          case '/':
+            console.log('run / operation')
+            newTotal /= parseInt(app.displayText)
+            app.runningTotal = newTotal
+            return app.runningTotal
+        }
+      }
+      return
+    }
+    function updateDisplay() {
+      //update display when equals key is pressed
+    }
+
+    function total() {
+      if (app.runningTotal != '' && app.displayText != '') {
+        console.log(app.runningTotal, app.displayText)
+        let x = convertToNumber(app.currentOperation)
+        console.log(x)
+        app.displayText = ''
+        console.log('clearing displayText')
+      } else console.log(app.runningTotal + convertToNumber(currentOperation))
+    }
+
+    function updateCurrentOperator(event) {
+      app.currentOperation = event.target.innerText
+      console.log('new operator', app.currentOperation)
+      return updateRunningTotal(app.currentOperation)
     }
 
   },
